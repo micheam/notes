@@ -1,5 +1,35 @@
 #!/usr/bin/env bash
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NOCOLOR='\033[0m'
+
+success() {
+  printf "${GREEN}
+██████╗  █████╗ ███████╗███████╗███████╗██████╗ 
+██╔══██╗██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗
+██████╔╝███████║███████╗███████╗█████╗  ██║  ██║
+██╔═══╝ ██╔══██║╚════██║╚════██║██╔══╝  ██║  ██║
+██║     ██║  ██║███████║███████║███████╗██████╔╝
+╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═════╝ 
+${NOCOLOR}\n"
+}
+
+failed() {
+  printf "${RED}
+  █████▒▄▄▄       ██▓ ██▓    ▓█████ ▓█████▄ 
+▓██   ▒▒████▄    ▓██▒▓██▒    ▓█   ▀ ▒██▀ ██▌
+▒████ ░▒██  ▀█▄  ▒██▒▒██░    ▒███   ░██   █▌
+░▓█▒  ░░██▄▄▄▄██ ░██░▒██░    ▒▓█  ▄ ░▓█▄   ▌
+░▒█░    ▓█   ▓██▒░██░░██████▒░▒████▒░▒████▓ 
+ ▒ ░    ▒▒   ▓▒█░░▓  ░ ▒░▓  ░░░ ▒░ ░ ▒▒▓  ▒ 
+ ░       ▒   ▒▒ ░ ▒ ░░ ░ ▒  ░ ░ ░  ░ ░ ▒  ▒ 
+ ░ ░     ░   ▒    ▒ ░  ░ ░      ░    ░ ░  ░ 
+             ░  ░ ░      ░  ░   ░  ░   ░    
+                                     ░      
+${NOCOLOR}\n"
+}
+
 create_book()
 {
   echo
@@ -14,7 +44,7 @@ create_book()
 
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
-    echo [FAILED] exit 1
+    failed && exit 1
   fi
   cat $outfile | jq -c .
 }
@@ -33,8 +63,7 @@ list_books()
 
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
-    echo [FAILED]
-    exit 1
+    failed && exit 1
   fi
   cat $outfile | jq -c .
 }
@@ -55,8 +84,7 @@ get_book()
     http://localhost/books`
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
-    echo [FAILED]
-    exit 1
+    failed && exit 1
   fi
   prepared=`cat $outfile|jq .id | tr -d '"'`
   echo $prepared
@@ -71,8 +99,7 @@ get_book()
 
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
-    echo [FAILED]
-    exit 1
+    failed && exit 1
   fi
   cat $outfile | jq -c .
 }
@@ -93,8 +120,7 @@ replace_book()
     http://localhost/books`
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
-    echo [FAILED]
-    exit 1
+    failed && exit 1
   fi
   prepared=`cat $outfile|jq .id | tr -d '"'`
   echo prepared: $prepared
@@ -110,8 +136,7 @@ replace_book()
 
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
-    echo [FAILED]
-    exit 1
+    failed && exit 1
   fi
   cat $outfile | jq -c .
 }
@@ -132,8 +157,7 @@ delete_book()
     http://localhost/books`
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
-    echo [FAILED]
-    exit 1
+    failed && exit 1
   fi
   prepared=`cat $outfile|jq .id | tr -d '"'`
   echo $prepared
@@ -148,8 +172,7 @@ delete_book()
 
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
-    echo [FAILED]
-    exit 1
+    failed && exit 1
   fi
   cat $outfile | jq -c .
 }
@@ -160,9 +183,4 @@ get_book
 replace_book
 delete_book
 
-echo
-echo "==================="
-echo "  ALL TEST PASSED  "
-echo "==================="
-
-exit 0
+success && exit 0
