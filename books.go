@@ -9,9 +9,10 @@ import (
 )
 
 type Book struct {
-	ID        BookID
-	Title     string
-	CreatedAt time.Time
+	ID        BookID    `db:"id"`
+	Title     string    `db:"title"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
 
 func NewBook(title string) (*Book, error) {
@@ -19,10 +20,12 @@ func NewBook(title string) (*Book, error) {
 		err := errors.New("empty")
 		return nil, NewValidationError("title", err)
 	}
+	now := time.Now()
 	return &Book{
 		ID:        NewBookID(),
 		Title:     title,
-		CreatedAt: time.Now(),
+		CreatedAt: now,
+		UpdatedAt: now,
 	}, nil
 }
 
