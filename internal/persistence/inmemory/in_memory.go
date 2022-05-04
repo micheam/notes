@@ -19,7 +19,7 @@ func (BookAccess) GetBook(_ context.Context, id notes.BookID) (*notes.Book, erro
 	return got.(*notes.Book), nil
 }
 
-func (BookAccess) ListBook(_ context.Context) ([]*notes.Book, error) {
+func (BookAccess) ListBooks(_ context.Context) ([]*notes.Book, error) {
 	var list []*notes.Book
 	books.Range(func(_, book any) bool {
 		list = append(list, book.(*notes.Book))

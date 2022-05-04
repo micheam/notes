@@ -79,5 +79,5 @@ func (b BookService) GetBook(ctx context.Context, id BookID) (*Book, error) {
 }
 
 func (b BookService) ListBooks(ctx context.Context) ([]*Book, error) {
-	return b.books.ListBook(ctx)
+	return b.books.ListBooks(ctx)
 }
