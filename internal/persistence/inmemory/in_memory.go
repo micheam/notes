@@ -33,7 +33,7 @@ func (BookAccess) InsertBook(_ context.Context, book *notes.Book) error {
 	return nil
 }
 
-func (BookAccess) UpdataBook(_ context.Context, book *notes.Book) error {
+func (BookAccess) UpdateBook(_ context.Context, book *notes.Book) error {
 	_, ok := books.Load(book.ID)
 	if !ok {
 		return notes.ErrNotFound
