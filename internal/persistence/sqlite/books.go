@@ -74,7 +74,8 @@ func (b BookAccess) InsertBook(ctx context.Context, book *notes.Book) error {
         INSERT INTO book
             (id, title, created_at, updated_at)
             VALUES 
-            (:id, :title, :created_at, :updated_at)`
+            (:id, :title, :created_at, :updated_at)
+    `
 	_, err := b.db.NamedExecContext(ctx, query, book)
 	if err != nil {
 		return err
