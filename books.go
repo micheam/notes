@@ -2,7 +2,9 @@ package notes
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -67,7 +69,18 @@ func (b BookService) SaveBook(ctx context.Context, book *Book) error {
 	if err := book.Valid(); err != nil {
 		return err
 	}
-	return b.books.InsertBook(ctx, book)
+
+	got, err := b.books.GetBook(ctx, book.ID)
+	if err != nil {
+		if !errors.Is(err, sql.ErrNoRows) {
+			return fmt.Errorf("get book: %w", err)
+		}
+		return b.books.InsertBook(ctx, book)
+	}
+
+	got.Title = book.Title
+	got.UpdatedAt = time.Now()
+	return b.books.UpdateBook(ctx, got)
 }
 
 func (b BookService) DeleteBook(ctx context.Context, book *Book) error {
