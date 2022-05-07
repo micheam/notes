@@ -3,6 +3,9 @@ package sqlite
 import (
 	"fmt"
 	"time"
+
+	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const timefmt = "2006-01-02 15:04:05.999999999Z07:00"
@@ -25,4 +28,12 @@ func parseDatetime(s string) time.Time {
 // formatDatetime convert t time.Time into string.
 func formatDatetime(t time.Time) string {
 	return t.Format(timefmt)
+}
+
+func Open(path string) (*sqlx.DB, error) {
+	db, err := sqlx.Open("sqlite3", path)
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
 }

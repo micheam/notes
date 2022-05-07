@@ -11,8 +11,6 @@ import (
 	"github.com/micheam/notes"
 	"github.com/micheam/notes/internal/persistence/sqlite"
 	"github.com/stretchr/testify/assert"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // TODO(micheam): want testing helper: RandomBook()

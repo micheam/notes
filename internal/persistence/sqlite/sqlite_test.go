@@ -2,7 +2,6 @@ package sqlite_test
 
 import (
 	"context"
-	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -17,8 +16,7 @@ import (
 func initdb(t *testing.T) *sqlx.DB {
 	t.Helper()
 
-	dir := t.TempDir()
-	db, err := sqlx.Open("sqlite3", filepath.Join(dir, "test.db"))
+	db, err := sqlite.Open(filepath.Join(t.TempDir(), "test.db"))
 	if err != nil {
 		t.Fatal(err)
 		return nil
@@ -26,12 +24,11 @@ func initdb(t *testing.T) *sqlx.DB {
 	t.Cleanup(func() { _ = db.Close() })
 
 	// init schema
-	schema, err := os.ReadFile("schema.sql")
+	err = sqlite.Migrate(db)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatal("failed to migrate database", err)
 		return nil
 	}
-	_ = db.MustExec(string(schema))
 
 	return db
 }
