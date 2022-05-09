@@ -1,4 +1,4 @@
-package localserver
+package http
 
 import (
 	"encoding/json"
@@ -52,7 +52,7 @@ func (ctrl BookController) New(w http.ResponseWriter, r *http.Request, p httprou
 	}
 
 	log.Printf("book created: %v\n", created)
-	JSON(w, BookDetail{
+	JSON(w, http.StatusCreated, BookDetail{
 		ID:        created.ID.String(),
 		Title:     created.Title,
 		CreatedAt: FormatTime(created.CreatedAt),
@@ -78,7 +78,7 @@ func (ctrl BookController) List(w http.ResponseWriter, r *http.Request, _ httpro
 	// if len(books) > 100 {
 	// 	books = books[0:100]
 	// }
-	JSON(w, map[string]interface{}{"books": books})
+	JSON(w, http.StatusOK, map[string]interface{}{"books": books})
 }
 
 func (ctrl BookController) View(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -93,7 +93,7 @@ func (ctrl BookController) View(w http.ResponseWriter, r *http.Request, p httpro
 		Error(w, fmt.Errorf("get book: %w", err))
 		return
 	}
-	JSON(w, BookDetail{
+	JSON(w, http.StatusOK, BookDetail{
 		ID:        got.ID.String(),
 		Title:     got.Title,
 		CreatedAt: FormatTime(got.CreatedAt),
@@ -135,7 +135,7 @@ func (ctrl BookController) Edit(w http.ResponseWriter, r *http.Request, p httpro
 		return
 	}
 
-	JSON(w, BookDetail{
+	JSON(w, http.StatusOK, BookDetail{
 		ID:        book.ID.String(),
 		Title:     book.Title,
 		CreatedAt: FormatTime(book.CreatedAt),
@@ -146,13 +146,13 @@ func (ctrl BookController) Delete(w http.ResponseWriter, r *http.Request, p http
 	ctx := r.Context()
 	bookID, err := notes.ParseBookID(p.ByName("book_id"))
 	if err != nil {
-		NotFound(w, "")
+		NotFound(w)
 		return
 	}
 	existing, err := ctrl.bookService.GetBook(ctx, bookID)
 	if err != nil {
 		if errors.Is(err, notes.ErrNotFound) {
-			JSON(w, map[string]any{}) // OK: Already gone
+			JSON(w, http.StatusOK, map[string]any{}) // OK: Already gone
 			return
 		}
 		Error(w, fmt.Errorf("get existing book: %w", err))
@@ -163,7 +163,7 @@ func (ctrl BookController) Delete(w http.ResponseWriter, r *http.Request, p http
 		Error(w, fmt.Errorf("delete book: %w", err))
 		return
 	}
-	JSON(w, map[string]any{})
+	JSON(w, http.StatusOK, map[string]any{})
 }
 
 type BookNewRequest struct {

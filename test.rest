@@ -1,0 +1,56 @@
+http://localhost/
+
+// cURL options
+--unix-socket /Users/micheam/.notes/localserver.sock 
+
+// Headers
+Accept: application/json
+
+--
+###################################################
+# CONTENT
+###################################################
+--
+// List content
+GET content?book_id=c1a7773b-5173-4abc-af0e-67c5266851af
+
+--
+// Create content
+Content-Type: text/markdown
+POST content?title=new+content&book_id=c1a7773b-5173-4abc-af0e-67c5266851af
+@testdata/sample.md
+
+// List content
+GET content?book_id=c1a7773b-5173-4abc-af0e-67c5266851af
+
+--
+GET content/a2af1276-875d-47c8-a387-8b3ea163d6bb
+
+--
+// Delete content
+DELETE content/a2af1276-875d-47c8-a387-8b3ea163d6bb
+
+--
+// Edit content
+Content-Type: text/markdown
+PUT content/f72dddb0-387b-4262-bc84-c2036d050298
+@testdata/sample1.md
+
+--
+###################################################
+# BOOKS
+###################################################
+--
+POST books
+{ "title": "another new book 2" }
+
+--
+GET books
+
+--
+GET books/81ce58c0-8b4e-4f27-a9dd-9bf620aed74a
+
+--
+DELETE books/book:a51ed4cd-65a2-48cd-ad8a-34ed2fff3eab
+
+

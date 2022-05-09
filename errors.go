@@ -6,7 +6,16 @@ import (
 	"strings"
 )
 
-var ErrNotFound = errors.New("not found")
+var (
+	ErrNotFound        = errors.New("not found")
+	ErrContentNotFound = errors.New("content not found")
+	ErrBookNotFound    = errors.New("book not found")
+
+	ErrInvalidTitle     = errors.New("invalid title")
+	ErrInvalidContentID = errors.New("invalid ContentID")
+	ErrInvalidBookID    = errors.New("invalid BookID")
+	ErrInvalidArgument  = errors.New("invalid Argument")
+)
 
 type ValidationError struct {
 	fieldErrors map[string][]error

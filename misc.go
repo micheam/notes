@@ -1,8 +1,10 @@
 package notes
 
-import "unicode/utf8"
+import (
+	"unicode/utf8"
+)
 
-func firstN(s string, n int) string {
+func FirstN(s string, n int) string {
 	i := 0
 	for j := range s {
 		if i == n {
@@ -13,12 +15,20 @@ func firstN(s string, n int) string {
 	return s
 }
 
-func ellipsis(s string, threshold int, mark string) string {
+func Ellipsis(s string, threshold int, mark string) string {
 	if utf8.RuneCountInString(s) <= threshold {
 		return s
 	}
 	if len(mark) == 0 {
-		return firstN(s, threshold)
+		return FirstN(s, threshold)
 	}
-	return firstN(s, threshold) + mark
+	return FirstN(s, threshold) + mark
+}
+
+func Ptr[T any](v T) *T {
+	return &v
+}
+
+func Deref[T any](p *T) T {
+	return *p
 }

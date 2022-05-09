@@ -6,8 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Book struct {
@@ -31,30 +29,12 @@ func NewBook(title string) (*Book, error) {
 	}, nil
 }
 
-func (b Book) Valid() error {
+func (b Book) Validate() error {
 	if len(b.Title) == 0 {
 		err := errors.New("empty string")
 		return NewValidationError("title", err)
 	}
 	return nil
-}
-
-type BookID string
-
-func (b BookID) String() string {
-	return string(b)
-}
-
-func NewBookID() BookID {
-	return BookID(uuid.New().String())
-}
-
-func ParseBookID(s string) (BookID, error) {
-	u, err := uuid.Parse(s)
-	if err != nil {
-		return "", err
-	}
-	return BookID(u.String()), nil
 }
 
 type BookService struct {
@@ -66,7 +46,7 @@ func NewBookService(bookRepo BookRepository) *BookService {
 }
 
 func (b BookService) SaveBook(ctx context.Context, book *Book) error {
-	if err := book.Valid(); err != nil {
+	if err := book.Validate(); err != nil {
 		return err
 	}
 

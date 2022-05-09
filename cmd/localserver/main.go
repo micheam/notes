@@ -8,9 +8,9 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/micheam/notes"
-	"github.com/micheam/notes/internal/fileio"
-	"github.com/micheam/notes/internal/localserver"
-	"github.com/micheam/notes/internal/persistence/sqlite"
+	"github.com/micheam/notes/fileio"
+	localserver "github.com/micheam/notes/http"
+	"github.com/micheam/notes/sqlite"
 )
 
 var db *sqlx.DB
@@ -39,6 +39,10 @@ func init() {
 	bookRepo := sqlite.NewBookAccess(db)
 	bookSvc := notes.NewBookService(bookRepo)
 	localserver.SetBookService(bookSvc)
+
+	contRepo := sqlite.NewContentAccess(db)
+	contSvc := notes.NewContentService(contRepo, bookRepo)
+	localserver.SetContentService(contSvc)
 }
 
 func main() {
@@ -62,5 +66,5 @@ func datasource() (path string, err error) {
 	if len(hm) == 0 {
 		return "", fmt.Errorf("env HOME is empty")
 	}
-	return filepath.Join(hm, ".notes", "books.db"), nil
+	return filepath.Join(hm, ".notes", "notes.db"), nil
 }

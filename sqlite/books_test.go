@@ -9,12 +9,9 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/micheam/notes"
-	"github.com/micheam/notes/internal/persistence/sqlite"
+	"github.com/micheam/notes/sqlite"
 	"github.com/stretchr/testify/assert"
 )
-
-// TODO(micheam): want testing helper: RandomBook()
-// maybe notes/fazzing package?
 
 func TestBookAccess_InsertBook(t *testing.T) {
 	t.Parallel()
@@ -55,19 +52,23 @@ func TestBookAccess_UpdateBook(t *testing.T) {
 	book.Title = book.Title + " updated"
 	sut := sqlite.NewBookAccess(db)
 	err := sut.UpdateBook(ctx, book)
-	assert.NoError(t, err)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
 
 	// Verify
 	got, err := sut.GetBook(ctx, book.ID)
-	if assert.NoError(t, err) {
-		if diff := cmp.Diff(book, got, opts...); diff != "" {
-			t.Errorf("got book mismatch (-want, +got):%s\n", diff)
-		}
-		assert.True(
-			t, got.UpdatedAt.After(orgCreatedAt),
-			"UpdatedAt: got %v, org %v", got.UpdatedAt, orgCreatedAt,
-		)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
 	}
+	if diff := cmp.Diff(book, got, opts...); diff != "" {
+		t.Errorf("got book mismatch (-want, +got):%s\n", diff)
+	}
+	assert.True(
+		t, got.UpdatedAt.After(orgCreatedAt),
+		"UpdatedAt: got %v, org %v", got.UpdatedAt, orgCreatedAt,
+	)
 }
 
 func TestBookAccess_ListBooks(t *testing.T) {
