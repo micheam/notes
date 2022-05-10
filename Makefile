@@ -1,7 +1,7 @@
 TARGET = bin/notes
 
-$(TARGET) : clean ./cmd/cli/notes
-	go build -o $(TARGET) ./cmd/cli/notes
+$(TARGET) : clean ./cmd/localserver
+	go build -o $(TARGET) ./cmd/localserver   
 
 clean :
 	rm -rf bin/
