@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -46,15 +47,32 @@ func (b BookID) String() string {
 }
 
 func NewBookID() BookID {
-	return BookID(uuid.New().String())
+	return BookID("book:" + uuid.New().String())
 }
 
+var ErrInvalidBookID = errors.New("invalid BookID")
+
 func ParseBookID(s string) (BookID, error) {
-	u, err := uuid.Parse(s)
-	if err != nil {
-		return "", err
+	pref, rowuuid, found := strings.Cut(s, ":")
+	if !found {
+		return "", fmt.Errorf("%w: missing prefix", ErrInvalidBookID)
 	}
-	return BookID(u.String()), nil
+	if pref != "book" {
+		return "", fmt.Errorf("%w: wrong prefix", ErrInvalidBookID)
+	}
+	_, err := uuid.Parse(rowuuid)
+	if err != nil {
+		return "", fmt.Errorf("parse uuid: %w", err)
+	}
+	return BookID("book:" + rowuuid), nil
+}
+
+func MustParseBookID(s string) BookID {
+	bid, err := ParseBookID(s)
+	if err != nil {
+		panic(err)
+	}
+	return bid
 }
 
 type BookService struct {
