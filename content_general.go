@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Basic struct {
+type GeneralContent struct {
 	Parent    BookID
 	ID        ContentID
 	Title     Title
@@ -13,13 +13,13 @@ type Basic struct {
 	UpdatedAt time.Time
 }
 
-func NewBasic(p BookID, t Title) (*Basic, error) {
+func NewGeneralContent(p BookID, t Title) (*GeneralContent, error) {
 	if err := t.Validate(); err != nil {
 		return nil, err
 	}
 	id := NewContentID()
 	now := time.Now()
-	return &Basic{
+	return &GeneralContent{
 		Parent:    p,
 		ID:        id,
 		Title:     t,
