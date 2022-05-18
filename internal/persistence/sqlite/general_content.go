@@ -6,7 +6,6 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/micheam/notes"
-	"github.com/micheam/notes/content"
 )
 
 type GeneralContentRow struct {
@@ -18,9 +17,9 @@ type GeneralContentRow struct {
 	UpdatedAt string `db:"updated_at"`
 }
 
-func (row GeneralContentRow) ToGeneralContent() *content.Basic {
-	return &content.Basic{
-		ID:        content.ContentID(row.ID),
+func (row GeneralContentRow) ToGeneralContent() *notes.Basic {
+	return &notes.Basic{
+		ID:        notes.ContentID(row.ID),
 		Parent:    notes.BookID(row.BookID),
 		Title:     notes.Title(row.Title),
 		Body:      row.Body,
@@ -35,7 +34,7 @@ type GeneralContentAccess struct {
 
 func NewGeneralContentAccess(db *sqlx.DB) *GeneralContentAccess { return &GeneralContentAccess{db} }
 
-func (g GeneralContentAccess) Get(ctx context.Context, id content.ContentID) (*content.Basic, error) {
+func (g GeneralContentAccess) Get(ctx context.Context, id notes.ContentID) (*notes.Basic, error) {
 	query := `
         SELECT
           id, book_id, title, body, created_at, updated_at
@@ -49,7 +48,7 @@ func (g GeneralContentAccess) Get(ctx context.Context, id content.ContentID) (*c
 	return row.ToGeneralContent(), nil
 }
 
-func (g GeneralContentAccess) Delete(ctx context.Context, cont *content.Basic) error {
+func (g GeneralContentAccess) Delete(ctx context.Context, cont *notes.Basic) error {
 	query := `
       DELETE FROM general
       WHERE id=:id;
@@ -61,7 +60,7 @@ func (g GeneralContentAccess) Delete(ctx context.Context, cont *content.Basic) e
 	return nil
 }
 
-func (g GeneralContentAccess) Insert(ctx context.Context, cont *content.Basic) error {
+func (g GeneralContentAccess) Insert(ctx context.Context, cont *notes.Basic) error {
 	row := &GeneralContentRow{
 		ID:        cont.ID.String(),
 		BookID:    cont.Parent.String(),
@@ -80,7 +79,7 @@ func (g GeneralContentAccess) Insert(ctx context.Context, cont *content.Basic) e
 	return err
 }
 
-func (g GeneralContentAccess) List(ctx context.Context) ([]*content.Basic, error) {
+func (g GeneralContentAccess) List(ctx context.Context) ([]*notes.Basic, error) {
 	query := `
         SELECT
           id, book_id, title, body, created_at, updated_at
@@ -91,7 +90,7 @@ func (g GeneralContentAccess) List(ctx context.Context) ([]*content.Basic, error
 	if err := g.db.SelectContext(ctx, &rows, query); err != nil {
 		return nil, err
 	}
-	list := make([]*content.Basic, len(rows))
+	list := make([]*notes.Basic, len(rows))
 	for i := range rows {
 		row := rows[i]
 		list[i] = row.ToGeneralContent()
@@ -99,7 +98,7 @@ func (g GeneralContentAccess) List(ctx context.Context) ([]*content.Basic, error
 	return list, nil
 }
 
-func (g GeneralContentAccess) Update(ctx context.Context, cont *content.Basic) error {
+func (g GeneralContentAccess) Update(ctx context.Context, cont *notes.Basic) error {
 	cont.UpdatedAt = time.Now()
 	query := `
         UPDATE general

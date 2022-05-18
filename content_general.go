@@ -1,21 +1,19 @@
-package content
+package notes
 
 import (
 	"time"
-
-	"github.com/micheam/notes"
 )
 
 type Basic struct {
-	Parent    notes.BookID
+	Parent    BookID
 	ID        ContentID
-	Title     notes.Title
+	Title     Title
 	Body      string // TOOD: Introduce Markdown format string types.
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-func NewBasic(p notes.BookID, t notes.Title) (*Basic, error) {
+func NewBasic(p BookID, t Title) (*Basic, error) {
 	if err := t.Validate(); err != nil {
 		return nil, err
 	}
