@@ -9,7 +9,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/micheam/notes"
-	"github.com/micheam/notes/internal/persistence/sqlite"
+	"github.com/micheam/notes/internal/sqlite"
 	"github.com/stretchr/testify/assert"
 )
 

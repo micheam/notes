@@ -10,7 +10,7 @@ import (
 	"github.com/micheam/notes"
 	"github.com/micheam/notes/internal/fileio"
 	"github.com/micheam/notes/internal/localserver"
-	"github.com/micheam/notes/internal/persistence/sqlite"
+	"github.com/micheam/notes/internal/sqlite"
 )
 
 var db *sqlx.DB

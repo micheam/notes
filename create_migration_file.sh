@@ -2,7 +2,7 @@
 set -e
 
 CMD_GOOSE='go run github.com/pressly/goose/v3/cmd/goose@latest'
-DIR='./internal/persistence/sqlite/migrations'
+DIR='./internal/sqlite/migrations'
 DIALECT='sqlite3'
 DBNAME='test.db'
 
