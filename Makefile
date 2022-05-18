@@ -1,7 +1,12 @@
 TARGET = bin/notes
 
-$(TARGET) : clean ./cmd/localserver
+$(TARGET) : clean unit-test ./cmd/localserver
 	go build -o $(TARGET) ./cmd/localserver   
 
+.PHONY : clean
 clean :
-	rm -rf bin/
+	@rm -rf bin/
+
+.PHONY : unit-test              
+unit-test :
+	@go test ./...
