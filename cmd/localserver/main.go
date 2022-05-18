@@ -9,7 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/micheam/notes"
 	"github.com/micheam/notes/internal/fileio"
-	"github.com/micheam/notes/internal/localserver"
+	localserver "github.com/micheam/notes/internal/http"
 	"github.com/micheam/notes/internal/sqlite"
 )
 
