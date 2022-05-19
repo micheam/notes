@@ -200,7 +200,7 @@ func NewBook(title string) (*Book, error) {
 	}, nil
 }
 
-func (b Book) Valid() error {
+func (b Book) Validate() error {
 	if len(b.Title) == 0 {
 		err := errors.New("empty string")
 		return NewValidationError("title", err)
@@ -217,7 +217,7 @@ func NewBookService(bookRepo BookRepository) *BookService {
 }
 
 func (b BookService) SaveBook(ctx context.Context, book *Book) error {
-	if err := book.Valid(); err != nil {
+	if err := book.Validate(); err != nil {
 		return err
 	}
 
