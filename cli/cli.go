@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/micheam/notes/internal/cli/books"
+	"github.com/micheam/notes/cli/books"
 	"github.com/urfave/cli/v2"
 )
 

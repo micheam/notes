@@ -10,7 +10,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/jmoiron/sqlx"
 	"github.com/micheam/notes"
-	"github.com/micheam/notes/internal/sqlite"
+	"github.com/micheam/notes/sqlite"
 )
 
 func initdb(t *testing.T) *sqlx.DB {
