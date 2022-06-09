@@ -24,3 +24,11 @@ func Ellipsis(s string, threshold int, mark string) string {
 	}
 	return FirstN(s, threshold) + mark
 }
+
+func Ptr[T any](v T) *T {
+	return &v
+}
+
+func Deref[T any](p *T) T {
+	return *p
+}
