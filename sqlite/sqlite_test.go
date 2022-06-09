@@ -35,7 +35,7 @@ func initdb(t *testing.T) *sqlx.DB {
 
 var opts = cmp.Options{
 	cmpopts.IgnoreFields(notes.Book{}, "UpdatedAt"),
-	cmpopts.IgnoreFields(notes.GeneralContent{}, "UpdatedAt"),
+	cmpopts.IgnoreFields(notes.Content{}, "UpdatedAt"),
 	cmpopts.IgnoreUnexported(notes.Book{}),
 	cmpopts.EquateApproxTime(1 * time.Second),
 }
@@ -57,7 +57,7 @@ func prepareBook(t *testing.T, db *sqlx.DB, book *notes.Book) {
 	t.Cleanup(func() { _ = db.MustExec("delete from book where id=?", book.ID) })
 }
 
-func newGeneralContent(t *testing.T, bookID notes.BookID, title notes.Title) *notes.GeneralContent {
+func genContent(t *testing.T, bookID notes.BookID, title notes.Title) *notes.Content {
 	cont, err := notes.NewGeneralContent(bookID, title)
 	if err != nil {
 		t.Fatal(err)
@@ -65,9 +65,9 @@ func newGeneralContent(t *testing.T, bookID notes.BookID, title notes.Title) *no
 	return cont
 }
 
-func prepareGeneralCont(t *testing.T, db *sqlx.DB, cont *notes.GeneralContent) {
+func prepareContent(t *testing.T, db *sqlx.DB, cont *notes.Content) {
 	t.Helper()
-	err := sqlite.NewGeneralContentAccess(db).Insert(context.Background(), cont)
+	err := sqlite.NewContentAccess(db).Insert(context.Background(), cont)
 	if err != nil {
 		t.Fatal(err)
 	}

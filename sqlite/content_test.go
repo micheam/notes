@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGeneralContentAccess_Insert(t *testing.T) {
+func TestContentAccess_Insert(t *testing.T) {
 	t.Parallel()
 	db := initdb(t)
 	ctx := context.Background()
@@ -23,23 +23,23 @@ func TestGeneralContentAccess_Insert(t *testing.T) {
 	prepareBook(t, db, book)
 
 	// exercise
-	sut := sqlite.NewGeneralContentAccess(db)
-	cont := newGeneralContent(t, book.ID, "some content title")
+	sut := sqlite.NewContentAccess(db)
+	cont := genContent(t, book.ID, "some content title")
 	err := sut.Insert(ctx, cont)
 	assert.NoError(t, err)
 }
 
-func TestGeneralContentAccess_Get(t *testing.T) {
+func TestContentAccess_Get(t *testing.T) {
 	t.Parallel()
 	db := initdb(t)
 	ctx := context.Background()
-	sut := sqlite.NewGeneralContentAccess(db)
+	sut := sqlite.NewContentAccess(db)
 
 	// prepare data
 	book := newBook(t, "some book title")
 	prepareBook(t, db, book)
-	cont := newGeneralContent(t, book.ID, "some content title")
-	prepareGeneralCont(t, db, cont)
+	cont := genContent(t, book.ID, "some content title")
+	prepareContent(t, db, cont)
 
 	got, err := sut.Get(ctx, cont.ID)
 	if assert.NoError(t, err) {
@@ -49,7 +49,7 @@ func TestGeneralContentAccess_Get(t *testing.T) {
 	}
 }
 
-func TestGeneralContentAccess_Update(t *testing.T) {
+func TestContentAccess_Update(t *testing.T) {
 	t.Parallel()
 	db := initdb(t)
 	ctx := context.Background()
@@ -59,15 +59,15 @@ func TestGeneralContentAccess_Update(t *testing.T) {
 	prepareBook(t, db, book)
 
 	// Prepare content
-	cont := newGeneralContent(t, book.ID, "some content title")
+	cont := genContent(t, book.ID, "some content title")
 	orgCreatedAt := time.Now().Add(-10 * time.Second)
 	cont.CreatedAt = orgCreatedAt
 	cont.UpdatedAt = orgCreatedAt
-	prepareGeneralCont(t, db, cont)
+	prepareContent(t, db, cont)
 
 	// Exercise - Edit and Save content
 	cont.Title = cont.Title + " updated"
-	sut := sqlite.NewGeneralContentAccess(db)
+	sut := sqlite.NewContentAccess(db)
 	err := sut.Update(ctx, cont)
 	assert.NoError(t, err)
 
@@ -84,18 +84,18 @@ func TestGeneralContentAccess_Update(t *testing.T) {
 	}
 }
 
-func TestGeneralContentAccess_Delete(t *testing.T) {
+func TestContentAccess_Delete(t *testing.T) {
 	t.Parallel()
 	db := initdb(t)
 
 	// Prepare data
 	book := newBook(t, "test book: "+uuid.New().String())
 	prepareBook(t, db, book)
-	cont := newGeneralContent(t, book.ID, "some content title")
-	prepareGeneralCont(t, db, cont)
+	cont := genContent(t, book.ID, "some content title")
+	prepareContent(t, db, cont)
 
 	// Exercise
-	sut := sqlite.NewGeneralContentAccess(db)
+	sut := sqlite.NewContentAccess(db)
 	t.Run("must delete content", func(t *testing.T) {
 		err := sut.Delete(context.Background(), cont)
 		if assert.NoError(t, err) {
@@ -105,13 +105,13 @@ func TestGeneralContentAccess_Delete(t *testing.T) {
 	})
 	t.Run("no error if content not exists", func(t *testing.T) {
 		title := notes.Title("no-exists: " + uuid.New().String())
-		cont := newGeneralContent(t, book.ID, title)
+		cont := genContent(t, book.ID, title)
 		err := sut.Delete(context.Background(), cont)
 		assert.NoError(t, err)
 	})
 }
 
-func TestGeneralContentAccess_List(t *testing.T) {
+func TestContentAccess_List(t *testing.T) {
 	t.Parallel()
 	db := initdb(t)
 
@@ -120,11 +120,11 @@ func TestGeneralContentAccess_List(t *testing.T) {
 	prepareBook(t, db, book)
 	for i := 0; i < 100; i++ {
 		title := notes.Title("title" + uuid.New().String())
-		prepareGeneralCont(t, db, newGeneralContent(t, book.ID, title))
+		prepareContent(t, db, genContent(t, book.ID, title))
 	}
 
 	// Exercise
-	sut := sqlite.NewGeneralContentAccess(db)
+	sut := sqlite.NewContentAccess(db)
 	list, err := sut.List(context.Background())
 	if assert.NoError(t, err) {
 		assert.Len(t, list, 100)

@@ -144,11 +144,11 @@ func (t TimeStamp) Format() string {
 
 // =====================================
 //
-// GeneralContent
+// Content
 //
 // =====================================
 
-type GeneralContent struct {
+type Content struct {
 	Parent    BookID
 	ID        ContentID
 	Title     Title
@@ -157,13 +157,13 @@ type GeneralContent struct {
 	UpdatedAt time.Time
 }
 
-func NewGeneralContent(p BookID, t Title) (*GeneralContent, error) {
+func NewGeneralContent(p BookID, t Title) (*Content, error) {
 	if err := t.Validate(); err != nil {
 		return nil, err
 	}
 	id := NewContentID()
 	now := time.Now()
-	return &GeneralContent{
+	return &Content{
 		Parent:    p,
 		ID:        id,
 		Title:     t,
