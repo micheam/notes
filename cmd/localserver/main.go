@@ -8,9 +8,9 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/micheam/notes"
-	"github.com/micheam/notes/internal/fileio"
-	"github.com/micheam/notes/internal/localserver"
-	"github.com/micheam/notes/internal/persistence/sqlite"
+	"github.com/micheam/notes/fileio"
+	localserver "github.com/micheam/notes/http"
+	"github.com/micheam/notes/sqlite"
 )
 
 var db *sqlx.DB

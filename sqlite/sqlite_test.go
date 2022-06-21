@@ -10,7 +10,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/jmoiron/sqlx"
 	"github.com/micheam/notes"
-	"github.com/micheam/notes/internal/persistence/sqlite"
+	"github.com/micheam/notes/sqlite"
 )
 
 func initdb(t *testing.T) *sqlx.DB {
@@ -35,6 +35,7 @@ func initdb(t *testing.T) *sqlx.DB {
 
 var opts = cmp.Options{
 	cmpopts.IgnoreFields(notes.Book{}, "UpdatedAt"),
+	cmpopts.IgnoreFields(notes.Content{}, "UpdatedAt"),
 	cmpopts.IgnoreUnexported(notes.Book{}),
 	cmpopts.EquateApproxTime(1 * time.Second),
 }
@@ -54,4 +55,21 @@ func prepareBook(t *testing.T, db *sqlx.DB, book *notes.Book) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = db.MustExec("delete from book where id=?", book.ID) })
+}
+
+func genContent(t *testing.T, bookID notes.BookID, title notes.Title) *notes.Content {
+	cont, err := notes.NewGeneralContent(bookID, title)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return cont
+}
+
+func prepareContent(t *testing.T, db *sqlx.DB, cont *notes.Content) {
+	t.Helper()
+	err := sqlite.NewContentAccess(db).Insert(context.Background(), cont)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = db.MustExec("delete from general where id=?", cont.ID) })
 }

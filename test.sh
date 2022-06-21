@@ -29,6 +29,24 @@ failed() {
                                      ░      
 ${NOCOLOR}\n"
 }
+ 
+ping()
+{
+  local status_code=$(command curl -X GET \
+    --write-out "%{http_code}" \
+    --silent \
+    --output /dev/null \
+    --connect-timeout 0.1 \
+    --unix-socket "${HOME}/.notes/localserver.sock" \
+    http://localhost/books)
+
+  echo "$status_code"
+
+  if [[ "${status_code}" -ne "000" ]]; then
+    return 0
+  fi
+  return 1
+}
 
 create_book()
 {
@@ -39,7 +57,7 @@ create_book()
   status_code=`command curl -X POST \
     -d "$(jo title=hello)" \ --write-out "%{http_code}" \
     --silent --output "${outfile}" \
-    --unix-socket "${HOME}/.notes/notes-localserver.sock" \
+    --unix-socket "${HOME}/.notes/localserver.sock" \
     http://localhost/books`
 
   echo STATUS_CODE: ${status_code}
@@ -58,7 +76,7 @@ list_books()
   status_code=`command curl -X GET \
     --write-out "%{http_code}" \
     --silent --output "${outfile}" \
-    --unix-socket "${HOME}/.notes/notes-localserver.sock" \
+    --unix-socket "${HOME}/.notes/localserver.sock" \
     http://localhost/books`
 
   echo STATUS_CODE: ${status_code}
@@ -80,7 +98,7 @@ get_book()
     -d "$(jo title=hello)" \
     --write-out "%{http_code}" \
     --silent --output "${outfile}" \
-    --unix-socket "${HOME}/.notes/notes-localserver.sock" \
+    --unix-socket "${HOME}/.notes/localserver.sock" \
     http://localhost/books`
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
@@ -94,7 +112,7 @@ get_book()
   status_code=`command curl -X GET \
     --write-out "%{http_code}" \
     --silent --output "${outfile}" \
-    --unix-socket "${HOME}/.notes/notes-localserver.sock" \
+    --unix-socket "${HOME}/.notes/localserver.sock" \
     http://localhost/books/$prepared`
 
   echo STATUS_CODE: ${status_code}
@@ -116,7 +134,7 @@ replace_book()
     -d "$(jo title=hello)" \
     --write-out "%{http_code}" \
     --silent --output "${outfile}" \
-    --unix-socket "${HOME}/.notes/notes-localserver.sock" \
+    --unix-socket "${HOME}/.notes/localserver.sock" \
     http://localhost/books`
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
@@ -131,7 +149,7 @@ replace_book()
     -d "$(jo title=world)" \
     --write-out "%{http_code}" \
     --silent --output "${outfile}" \
-    --unix-socket "${HOME}/.notes/notes-localserver.sock" \
+    --unix-socket "${HOME}/.notes/localserver.sock" \
     http://localhost/books/$prepared`
 
   echo STATUS_CODE: ${status_code}
@@ -153,7 +171,7 @@ delete_book()
     -d "$(jo title=hello)" \
     --write-out "%{http_code}" \
     --silent --output "${outfile}" \
-    --unix-socket "${HOME}/.notes/notes-localserver.sock" \
+    --unix-socket "${HOME}/.notes/localserver.sock" \
     http://localhost/books`
   echo STATUS_CODE: ${status_code}
   if [[ $status_code -ne 200 ]]; then
@@ -167,7 +185,7 @@ delete_book()
   status_code=`command curl -X DELETE \
     --write-out "%{http_code}" \
     --silent --output "${outfile}" \
-    --unix-socket "${HOME}/.notes/notes-localserver.sock" \
+    --unix-socket "${HOME}/.notes/localserver.sock" \
     http://localhost/books/$prepared`
 
   echo STATUS_CODE: ${status_code}
@@ -176,6 +194,12 @@ delete_book()
   fi
   cat $outfile | jq -c .
 }
+
+if ! ping; then
+  failed
+  echo 😭 'local server not running'
+  exit 1
+fi
 
 create_book
 list_books
